@@ -11,6 +11,7 @@ from rest_framework import status
 from bangazonapi.models import Product, Customer, ProductCategory
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.exceptions import ValidationError
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -18,8 +19,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'name', 'price', 'number_sold', 'description',
-                  'quantity', 'created_date', 'location', 'image_path',
-                  'average_rating', 'can_be_rated', )
+                'quantity', 'created_date', 'location', 'image_path',
+                'average_rating', 'can_be_rated', )
         depth = 1
 
 
@@ -104,12 +105,18 @@ class Products(ViewSet):
 
             new_product.image_path = data
 
-        new_product.save()
+        try:
+            new_product.full_clean()
+            new_product.save()
+            serializer = ProductSerializer(
+                new_product, context={'request': request})
 
-        serializer = ProductSerializer(
-            new_product, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValidationError:
+            return Response("Validation Error",status=status.HTTP_412_PRECONDITION_FAILED)
+
+
 
     def retrieve(self, request, pk=None):
         """
