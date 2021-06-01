@@ -82,7 +82,10 @@ class Profile(ViewSet):
         """
         try:
             current_user = Customer.objects.get(user=request.auth.user) #issue ticket 22
+            #what current user recommends to others
             current_user.recommends = Recommendation.objects.filter(recommender=current_user)
+            #what others have recommended to current user
+            current_user.recommended = Recommendation.objects.filter(customer=current_user) #issue ticket #1
 
             serializer = ProfileSerializer(
                 current_user, many=False, context={'request': request})
@@ -360,7 +363,17 @@ class RecommenderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recommendation
-        fields = ('product', 'customer',)
+        fields = ('product', 'customer')
+
+
+class RecommendedSerializer(serializers.ModelSerializer):
+    """JSON serializer for recommendations"""
+    recommender = CustomerSerializer()
+    product = ProfileProductSerializer()
+
+    class Meta:
+        model = Recommendation
+        fields = ('product', 'recommender')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -371,12 +384,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
     user = UserSerializer(many=False)
     recommends = RecommenderSerializer(many=True)
+    recommended = RecommendedSerializer(many=True)
 
     class Meta:
         model = Customer
         fields = ('id', 'url', 'user', 'phone_number',
-                  'address', 'payment_types', 'recommends',)
-        depth = 1
+                'address', 'payment_types', 'recommends','recommended')
+        depth = 1  #not needed with serializer
 
 
 class FavoriteUserSerializer(serializers.HyperlinkedModelSerializer):
