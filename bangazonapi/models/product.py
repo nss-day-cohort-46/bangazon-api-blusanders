@@ -57,13 +57,19 @@ class Product(SafeDeleteModel):
         Returns:
             number -- The average rating for the product
         """
-        ratings = ProductRating.objects.filter(product=self)
-        total_rating = 0
-        for rating in ratings:
-            total_rating += rating.rating
 
-        avg = total_rating / len(ratings)
-        return avg
+        try:
+            ratings = ProductRating.objects.filter(product=self)
+            total_rating = 0
+            for rating in ratings:
+                total_rating += rating.rating
+
+            avg = total_rating / len(ratings)
+            return avg
+            
+        except:
+            return 0
+
 
     class Meta:
         verbose_name = ("product")
