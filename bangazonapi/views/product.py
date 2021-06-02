@@ -113,8 +113,8 @@ class Products(ViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        except ValidationError:
-            return Response("Validation Error",status=status.HTTP_412_PRECONDITION_FAILED)
+        except ValidationError as ex:
+            return Response({"error":ex.args[0]},status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -191,6 +191,7 @@ class Products(ViewSet):
 
         product_category = ProductCategory.objects.get(pk=request.data["category_id"])
         product.category = product_category
+        product.full_clean()
         product.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)

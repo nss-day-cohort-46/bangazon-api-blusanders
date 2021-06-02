@@ -6,3 +6,5 @@ bangazonapi_recommendation
 values (4,29,5)
 
 select * from authtoken_token
+
+delete from bangazonapi_recommendation where customer_id=8
