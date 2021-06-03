@@ -50,7 +50,8 @@ class PaymentTests(APITestCase):
         payment.merchant_name = "American Express"
         payment.account_number = "111-1111-1111"
         payment.expiration_date = "2024-12-31"
-        payment.create_date = "datetime.date.today()"
+        payment.create_date = datetime.date.today()
+        payment.customer_id=1
         payment.save()
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
@@ -59,4 +60,4 @@ class PaymentTests(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.client.get(f"/paymenttypes/{payment.id}")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
