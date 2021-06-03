@@ -12,7 +12,7 @@ select * from authtoken_token
 SELECT
     o.*,
     u.first_name, u.last_name
-    -- sum(p.price)
+
 FROM
     bangazonapi_order o
 JOIN
@@ -25,4 +25,3 @@ JOIN
     auth_user u ON c.user_id = u.id
 
 where payment_type_id is not NULL
-group by customer.id

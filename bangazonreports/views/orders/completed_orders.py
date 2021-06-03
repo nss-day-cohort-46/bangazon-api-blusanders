@@ -1,7 +1,9 @@
-"""Module for generating games by user report"""
+"""Module for generating orders report"""
 import sqlite3
 from django.shortcuts import render
 from bangazonapi.models import Order
+from bangazonreports.views import Connection
+
 
 def completed_orders_list(request):
 
@@ -13,18 +15,27 @@ def completed_orders_list(request):
 
             #get all completed orders
             db_cursor.execute("""
-                SELECT
-                    o.*,
-                    u.first_name, u.last_name
-                FROM
-                    bangazonapi_order o
-                JOIN
-                    bangazonapi_customer c ON o.customer_id = c.id
-                JOIN
-                    auth_user u ON c.user_id = u.id
+                    SELECT
+                        o.*,
+                        u.first_name, u.last_name,
+                        py.merchant_name,
+                        sum(p.price) as totalPrice
+                    FROM
+                        bangazonapi_order o
+                    JOIN
+                        bangazonapi_customer c ON o.customer_id = c.id
+                    JOIN
+                        bangazonapi_orderproduct op on op.order_id = o.id 
+                    JOIN
+                        bangazonapi_product p on op.product_id = p.id 
+                    JOIN
+                        bangazonapi_payment py on py.id = o.payment_type_id
+                    JOIN
+                        auth_user u ON c.user_id = u.id
 
-                where payment_type_id is not NULL
-                order by created_date
+                    where payment_type_id is not NULL
+
+                    group by c.id
                 """)
             dataset = db_cursor.fetchall()
 
@@ -48,40 +59,23 @@ def completed_orders_list(request):
             #     }
             # }
 
-            completed_orders = {}
+            completed_orders_list = []
 
             for row in dataset:
-                # Crete a Game instance and set its properties
-                order = Order()
-                game.title = row["title"]
-                game.maker = row["maker"]
-                game.skill_level = row["skill_level"]
-                game.number_of_players = row["number_of_players"]
-                game.gametype_id = row["gametype_id"]
+                completed_orders = {}
+                completed_orders["id"] = row["id"]
+                completed_orders["first_name"] = row["first_name"]
+                completed_orders["last_name"] = row["last_name"]
+                completed_orders["merchant_name"] = row["merchant_name"]
+                completed_orders["total_price"] = row["totalPrice"]
 
-                # Store the user's id
-                uid = row["user_id"]
-
-                # If the user's id is already a key in the dictionary...
-                if uid in games_by_user:
-
-                    # Add the current game to the `games` list for it
-                    games_by_user[uid]['games'].append(game)
-
-                else:
-                    # Otherwise, create the key and dictionary value
-                    games_by_user[uid] = {}
-                    games_by_user[uid]["id"] = uid
-                    games_by_user[uid]["full_name"] = row["full_name"]
-                    games_by_user[uid]["games"] = [game]
-
-        # Get only the values from the dictionary and create a list from them
-        list_of_users_with_games = games_by_user.values()
+                # Add the current game to the `games` list for it
+                completed_orders_list.append(completed_orders)
 
         # Specify the Django template and provide data context
-        template = 'users/list_with_games.html'
+        template = 'orders/completed_orders.html'
         context = {
-            'usergame_list': list_of_users_with_games
+            'completed_orders_list': completed_orders_list
         }
 
         return render(request, template, context)
