@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bangazon Reports</title>
+  </head>
+  <body>
+    <h1>Completed Orders</h1>
+
+    {% for order in completed_orders_list %}
+        <table border=1 cellpadding=10>
+        
+        <tr>
+        <td>Order ID:</td>
+        <td>{{ order.id }} </td>
+        </tr>
+        
+        <tr>
+          <td>Name:</td>
+          <td>{{ order.first_name }} {{ order.last_name }}</td>
+        </tr>
+        
+        <tr>
+        <td>Merchant:</td>
+        <td>{{ order.merchant_name }} </td>
+        </tr>
+        
+        <tr>
+          <td>Total:</td>
+          <td>{{ order.total_price }} </td>
+        </tr>
+
+    {% endfor %}
+  </body>
+</html>
