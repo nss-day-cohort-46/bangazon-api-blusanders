@@ -1,27 +1,32 @@
-select * from bangazonapi_recommendation
+insert into bangazonapi_favorite
+(customer_id, seller_id)
+VALUES
+(5,6)
 
-insert into 
-bangazonapi_recommendation
-(customer_id, product_id, recommender_id)
-values (4,22,5)
+delete from bangazonapi_favorite where customer_id =5
 
-select * from authtoken_token
+select * from bangazonapi_favorite
 
+SELECT
+f.*,
+u.last_name || ", " || u.first_name as cName
+
+FROM bangazonapi_favorite f
+
+JOIN bangazonapi_customer c on c.id = f.customer_id
+JOIN auth_user u ON c.user_id = u.id
+order by cName
 
 
 SELECT
-    o.*,
-    u.first_name, u.last_name
+f.*,
+u.last_name || ", " || u.first_name as cName,
+s.last_name || ", " || s.first_name as sName
 
-FROM
-    bangazonapi_order o
-JOIN
-    bangazonapi_customer c ON o.customer_id = c.id
-JOIN
-    bangazonapi_orderproduct op on op.order_id = o.id 
-JOIN
-    bangazonapi_product p on op.product_id = p.id 
-JOIN
-    auth_user u ON c.user_id = u.id
+FROM bangazonapi_favorite f
 
-where payment_type_id is not NULL
+JOIN bangazonapi_customer c on c.id = f.customer_id
+JOIN auth_user u ON c.user_id = u.id
+JOIN bangazonapi_customer cc on cc.id = f.seller_id
+JOIN auth_user s ON cc.user_id = s.id
+order by cName, sName

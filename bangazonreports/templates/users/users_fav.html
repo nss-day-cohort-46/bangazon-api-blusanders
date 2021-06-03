@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bangazon Reports</title>
+  </head>
+  <body>
+    <h1>User Favs</h1>
+
+    <table cellpadding=10 border=0>
+  
+    {% for users in user_favorites_list %}
+        
+        <tr>
+          <td><b>{{ users.cName }}<b></td>
+        </tr>
+
+      {% for seller in users.sellers %}
+        <tr>
+          <td>{{ seller.sName }}</td>
+        </tr>
+        
+      {% endfor %}
+
+    {% endfor %}
+</table>
+  </body>
+</html>
+
+ 
