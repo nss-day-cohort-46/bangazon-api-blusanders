@@ -19,19 +19,14 @@ def incomplete_orders_list(request):
                         o.*,
                         u.first_name, u.last_name,
                         sum(p.price) as totalPrice
-                    FROM
-                        bangazonapi_order o
-                    JOIN
-                        bangazonapi_customer c ON o.customer_id = c.id
-                    JOIN
-                        bangazonapi_orderproduct op on op.order_id = o.id 
-                    JOIN
-                        bangazonapi_product p on op.product_id = p.id 
-                    JOIN
-                        auth_user u ON c.user_id = u.id
+                    FROM bangazonapi_order o
+
+                    JOIN bangazonapi_customer c ON o.customer_id = c.id
+                    JOIN bangazonapi_orderproduct op on op.order_id = o.id 
+                    JOIN bangazonapi_product p on op.product_id = p.id 
+                    JOIN auth_user u ON c.user_id = u.id
 
                     where payment_type_id is NULL
-
                     group by c.id
 					order by o.id
                 """)
@@ -46,7 +41,6 @@ def incomplete_orders_list(request):
                 incomplete_orders["last_name"] = row["last_name"]
                 incomplete_orders["total_price"] = row["totalPrice"]
 
-                # Add the current game to the `games` list for it
                 incomplete_orders_list.append(incomplete_orders)
 
         template = 'orders/incomplete_orders.html'

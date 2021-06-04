@@ -8,29 +8,25 @@
   <body>
     <h1>Completed Orders</h1>
 
+    <table cellpadding=10 border=1>
+        <tr>
+          <td><b>Order ID</b></td>
+          <td><b>Name</b></td>
+          <td><b>Merchant</b></td>
+          <td><b>Total</b></td>
+        </tr>
     {% for order in completed_orders_list %}
-        <table border=1 cellpadding=10>
         
+
         <tr>
-        <td>Order ID:</td>
-        <td>{{ order.id }} </td>
-        </tr>
-        
-        <tr>
-          <td>Name:</td>
+          <td>{{ order.id }}</td>
           <td>{{ order.first_name }} {{ order.last_name }}</td>
-        </tr>
-        
-        <tr>
-        <td>Merchant:</td>
-        <td>{{ order.merchant_name }} </td>
-        </tr>
-        
-        <tr>
-          <td>Total:</td>
+          <td>{{ order.merchant_name }} </td>
           <td>{{ order.total_price }} </td>
         </tr>
-
     {% endfor %}
+</table>
   </body>
 </html>
+
+ 
