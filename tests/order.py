@@ -82,3 +82,10 @@ class OrderTests(APITestCase):
     # TODO: Complete order by adding payment type
 
     # TODO: New line item is not added to closed order
+
+    def test_new_order(self):
+        self.test_add_product_to_order()
+
+    def test_closed_order(self):
+        url = "/orders/1"
+        pass
