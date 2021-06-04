@@ -30,3 +30,18 @@ JOIN auth_user u ON c.user_id = u.id
 JOIN bangazonapi_customer cc on cc.id = f.seller_id
 JOIN auth_user s ON cc.user_id = s.id
 order by cName, sName
+
+
+                       SELECT
+                        o.*,
+                        u.first_name, u.last_name,
+                        py.merchant_name,
+                        sum(p.price) as totalPrice
+                    FROM bangazonapi_order o
+                    JOIN bangazonapi_customer c ON o.customer_id = c.id
+                    JOIN bangazonapi_orderproduct op on op.order_id = o.id 
+                    JOIN bangazonapi_product p on op.product_id = p.id 
+                    JOIN bangazonapi_payment py on py.id = o.payment_type_id
+                    JOIN auth_user u ON c.user_id = u.id
+
+                    where payment_type_id is not NULL
