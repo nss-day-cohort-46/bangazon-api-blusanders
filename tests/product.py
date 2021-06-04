@@ -103,10 +103,13 @@ class ProductTests(APITestCase):
         Ensure we can delete a product
         """
 
-        response = self.client.delete(f"/products/{self.product.id}")
+        self.test_create_product()
+
+        response = self.client.delete(f"/products/1")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        response = self.client.get(f"/products/{self.product.id}")
+        response = self.client.get(f"/products/1")
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     # TODO: Product can be rated. Assert average rating exists.
 
